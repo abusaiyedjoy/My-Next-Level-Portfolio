@@ -8,63 +8,6 @@ datasource db {
 }
 
 
-model User {
-  id            Int            @id @default(autoincrement())
-  name          String
-  title         String
-  bio           String
-  location      String
-  email         String
-  phone         String?
-  availability  String?
-
-  education     Education[]
-  skills        Skill[]
-  socialLinks   SocialLinks?
-}
-
-model Education {
-  id           Int      @id @default(autoincrement())
-  degree       String
-  institution  String
-  year         String
-  gpa          String?
-  achievements String[]
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Skill {
-  id       Int    @id @default(autoincrement())
-  name     String
-  level    Int    
-  years    Float  
-  category SkillCategory
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model SocialLinks {
-  id       Int     @id @default(autoincrement())
-  github   String?
-  linkedin String?
-  twitter  String?
-  portfolio String?
-
-  userId Int   @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum SkillCategory {
-  FRONTEND
-  BACKEND
-  DATABASE
-  TOOLS
-}
-
-
 model Blog {
   id           Int       @id @default(autoincrement())
   title        String
@@ -75,7 +18,6 @@ model Blog {
   tags         String[]   
   author       String
   authorAvatar String
-  date         DateTime
   views        Int        @default(0)
   likes        Int        @default(0)
   comments     Int        @default(0)

@@ -1,6 +1,7 @@
 // import compression from "compression";
 import cors from "cors";
 import express from "express";
+import { blogsRouter } from "./modules/blogs/blogs.route";
 
 const app = express();
 
@@ -16,8 +17,7 @@ app.use(
   })
 );
 
-// app.use("/api/v1/user", userRouter);
-// app.use("/api/v1/post", postRouter);
+app.use("/api/v1/blog", blogsRouter);
 // app.use("/api/v1/auth", authRouter);
 
 
