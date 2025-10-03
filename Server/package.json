@@ -14,8 +14,10 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.16.3",
@@ -23,6 +25,7 @@
     "tsx": "^4.20.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.6.0",

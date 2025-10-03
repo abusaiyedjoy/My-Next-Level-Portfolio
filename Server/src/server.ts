@@ -2,6 +2,7 @@ import http, { Server } from "http";
 import app from "./app";
 import dotenv from "dotenv";
 import { prisma } from "./config/db";
+import { seedAdmin } from "./utils/seedAdmin";
 
 dotenv.config();
 
@@ -31,4 +32,22 @@ async function startServer() {
     process.exit(1);
   }
 }
-startServer()
+(async () => {
+    await startServer()
+    await seedAdmin()
+})()
+
+
+
+// Graceful Shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
