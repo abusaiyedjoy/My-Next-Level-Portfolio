@@ -16,7 +16,7 @@ export const seedAdmin = async () => {
 
     const hashedPassword = await hashPassword(envVars.ADMIN_PASSWORD as string);
 
-    const admin = await prisma.admin.create({
+     await prisma.admin.create({
       data: {
         name: envVars.ADMIN_NAME as string,
         email: envVars.ADMIN_EMAIL as string,

@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { blogsRouter } from "./modules/blogs/blogs.route";
 import { projectsRouter } from "./modules/projects/projects.route";
+import { authRouter } from './modules/auth/auth.route';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.set('trust proxy', 1);
 // Routes
 app.use("/api/v1/blog", blogsRouter);
 app.use("/api/v1/project", projectsRouter);
+app.use("/api/v1/auth", authRouter);
 
 
 app.get("/", (_req, res) => {
