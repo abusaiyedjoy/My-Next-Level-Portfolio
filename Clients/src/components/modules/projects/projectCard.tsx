@@ -7,9 +7,10 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Github, Star, Calendar, Code2 } from "lucide-react";
+import { ExternalLink, Github, Code2 } from "lucide-react";
 import { TProject } from "@/types";
 import { useState } from "react";
+import Link from "next/link";
 
 const ProjectCard = ({ project }: { project: TProject }) => {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
@@ -38,16 +39,21 @@ const ProjectCard = ({ project }: { project: TProject }) => {
         </div>
 
         <CardHeader>
-          <div className="flex items-start justify-between">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#334CEC] dark:group-hover:text-[#334CEC] transition-colors">
-                {project.title}
-              </h3>
-          </div>
+          <Link
+            href={`/projects/${project.id}`}
+            className="flex items-start justify-between"
+          >
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#334CEC] dark:group-hover:text-[#334CEC] transition-colors">
+              {project.title}
+            </h3>
+          </Link>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed line-clamp-3">
-            {project.description}
+          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+            {project.description.length > 200
+              ? project.description.slice(0, 200) + "..."
+              : project.description}
           </p>
 
           {/* Tags */}

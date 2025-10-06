@@ -226,7 +226,7 @@ const AboutPage = () => {
                     alt={tech.name}
                     width={80}
                     height={80}
-                    className=" w-20 relative z-10 transform group-hover:scale-110 transition-transform duration-300"
+                    className="w-12 md:w-16 lg:w-20 relative z-10 transform group-hover:scale-110 transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -234,12 +234,12 @@ const AboutPage = () => {
           </Marquee>
 
           <ProgressiveBlur
-            className="pointer-events-none absolute top-0 left-0 h-full w-[200px]"
+            className="pointer-events-none absolute top-0 left-0 h-full w-[70px] md:w-[100px] lg:w-[200px]"
             direction="left"
             blurIntensity={1}
           />
           <ProgressiveBlur
-            className="pointer-events-none absolute top-0 right-0 h-full w-[200px]"
+            className="pointer-events-none absolute top-0 right-0 h-full w-[70px] md:w-[100px] lg:w-[200px]"
             direction="right"
             blurIntensity={1}
           />

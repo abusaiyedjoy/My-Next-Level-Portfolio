@@ -3,14 +3,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowLeft,
-  Calendar,
-  Eye,
-  MessageSquare,
-  ThumbsUp,
-  Share2,
   Tag,
   Loader2,
-  Edit,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";

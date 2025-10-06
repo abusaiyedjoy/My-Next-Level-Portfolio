@@ -64,7 +64,8 @@ export default function HomeHeader() {
 
         {/* Right actions */}
         <nav className="flex items-center gap-2">
-          <Button
+          <div className="hidden md:block">
+            <Button
             title="Resume"
             onClick={() => {
               const link = document.createElement("a");
@@ -73,6 +74,7 @@ export default function HomeHeader() {
               link.click();
             }}
           />
+          </div>
           {/* Mobile Menu Button */}
           {isMobile && (
             <Drawer.Root open={isOpen} onOpenChange={setIsOpen}>

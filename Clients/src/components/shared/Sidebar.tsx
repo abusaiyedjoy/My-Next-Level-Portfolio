@@ -1,6 +1,7 @@
 import React from 'react';
 import { signOut } from "next-auth/react";
 import { User, Briefcase, FileText, LogOut } from 'lucide-react';
+import  Link  from "next/link";
 
 interface SidebarProps {
   activeTab: string;
@@ -39,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <Link href="/" className="p-6 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#334DED] to-[#5865F2] flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
@@ -49,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">

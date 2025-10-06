@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TBlog } from "@/types";
 import { toast } from "react-hot-toast";
+import LoadingPage from "@/app/(public)/blogs/loading";
 
 const BlogsPage = () => {
   const router = useRouter();
@@ -93,38 +94,7 @@ const BlogsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen ">
-        <div className="text-center">
-          <Loader2 className="w-16 h-16 text-[#334DED] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Loading blogs...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl max-w-md">
-          <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-red-600 dark:text-red-400" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Error Loading Blogs
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-            <button
-              onClick={fetchBlogs}
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#334DED] to-[#5865F2] text-white font-semibold hover:shadow-lg transition-all"
-            >
-              Retry
-            </button>
-          </CardContent>
-        </Card>
-      </div>
+      <LoadingPage/>
     );
   }
 
@@ -132,7 +102,7 @@ const BlogsPage = () => {
     <div className="min-h-screen">
       <div className="space-y-6 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header Actions */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -296,12 +266,6 @@ const BlogsPage = () => {
                           >
                             <Eye className="w-4 h-4" />
                             <span className="hidden sm:inline">View</span>
-                          </button>
-                          <button
-                            className="px-3 md:px-4 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-semibold hover:bg-green-200 dark:hover:bg-green-900/50 transition-all text-sm"
-                            title="Share"
-                          >
-                            <Share2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteBlog(blog.id as number)}

@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import { Layers } from "lucide-react";
+import { Layers, Search } from "lucide-react";
 import { useState } from "react";
 import { TProject } from "@/types";
 import ProjectCard from "./projectCard";
+import { Card } from '@/components/ui/card';
 
 const categories = ["All", "Full Stack", "Frontend", "Backend"];
 
@@ -71,8 +72,7 @@ const ProjectPage = ({ projectsData }: ProjectPageProps) => {
         <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
           Showcasing my passion for{" "}
           <span className="text-[#334CEC] font-semibold">innovation</span>,{" "}
-          <span className="text-purple-500 font-semibold">creativity</span>,
-          and{" "}
+          <span className="text-purple-500 font-semibold">creativity</span>, and{" "}
           <span className="text-blue-500 font-semibold">problem-solving</span>
         </p>
       </motion.div>
@@ -109,12 +109,24 @@ const ProjectPage = ({ projectsData }: ProjectPageProps) => {
             {filteredProjects?.length ?? 0}
           </span>
         </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects?.map((project: TProject) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+        {filteredProjects?.length === 0 ? (
+          <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl p-12 text-center">
+            <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              No projects found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Try adjusting your search or filter to find what you're looking
+              for.
+            </p>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProjects?.map((project: TProject) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );
