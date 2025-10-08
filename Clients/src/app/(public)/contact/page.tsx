@@ -16,18 +16,18 @@ import {
   Zap,
   AlertCircle,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { quickContacts } from "@/components/modules/staticData";
 import { contactInfo } from '@/components/modules/staticData';
 
-// EmailJS Configuration - Replace with your actual credentials
-const EMAILJS_CONFIG = {
-  serviceId: 'service_yuohx56',      // Replace with your EmailJS Service ID
-  templateId: 'template_xxhuk1i',     // Replace with your EmailJS Template ID
-  publicKey: 'gBf8PO4FarSFho18q',       // Replace with your EmailJS Public Key
-};
+interface FormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
 
-// Animation variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -52,81 +52,46 @@ const itemVariants: Variants = {
 };
 
 const ContactPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [emailJsLoaded, setEmailJsLoaded] = useState(false);
 
-  // Load EmailJS script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-    script.async = true;
-    script.onload = () => {
-      (window as any).emailjs.init(EMAILJS_CONFIG.publicKey);
-      setEmailJsLoaded(true);
-    };
-    document.body.appendChild(script);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    mode: "onBlur",
+  });
 
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setError("");
 
-    if (!emailJsLoaded) {
-      setError("Email service is still loading. Please try again in a moment.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      // Prepare template parameters for EmailJS
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        to_name: "Abu Saiyed Joy", // Your name
-      };
+      const response = await fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-      // Send email using EmailJS
-      const response = await (window as any).emailjs.send(
-        EMAILJS_CONFIG.serviceId,
-        EMAILJS_CONFIG.templateId,
-        templateParams
-      );
+      const result = await response.json();
 
-      if (response.status === 200) {
+      if (response.ok && result.success) {
         setIsSubmitted(true);
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        
-        // Reset success message after 5 seconds
+        reset();
         setTimeout(() => setIsSubmitted(false), 5000);
       } else {
-        throw new Error("Failed to send email");
+        throw new Error(result.message || 'Failed to send message');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error sending email:", err);
-      setError("Failed to send message. Please try contacting me directly via email or social media.");
+      setError(
+        err.message || "Failed to send message. Please try contacting me directly via email or social media."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +99,6 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
       <Background />
       <motion.div
         className="container mx-auto px-4 py-12 sm:py-16 lg:py-20 max-w-7xl relative z-10"
@@ -247,7 +211,7 @@ const ContactPage: React.FC = () => {
                     </motion.button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -266,13 +230,21 @@ const ContactPage: React.FC = () => {
                         </Label>
                         <Input
                           id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
+                          {...register("name", {
+                            required: "Name is required",
+                            minLength: {
+                              value: 2,
+                              message: "Name must be at least 2 characters",
+                            },
+                          })}
                           placeholder="John Doe"
-                          required
                           className="border-none bg-white/50 dark:bg-white/5 backdrop-blur-sm focus:ring-2 focus:ring-[#334CEC]/50"
                         />
+                        {errors.name && (
+                          <p className="text-sm text-red-600 dark:text-red-400">
+                            {errors.name.message}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-semibold">
@@ -280,14 +252,22 @@ const ContactPage: React.FC = () => {
                         </Label>
                         <Input
                           id="email"
-                          name="email"
                           type="email"
-                          value={formData.email}
-                          onChange={handleChange}
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                              message: "Invalid email address",
+                            },
+                          })}
                           placeholder="john@example.com"
-                          required
                           className="border-none bg-white/50 dark:bg-white/5 backdrop-blur-sm focus:ring-2 focus:ring-[#334CEC]/50"
                         />
+                        {errors.email && (
+                          <p className="text-sm text-red-600 dark:text-red-400">
+                            {errors.email.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -297,13 +277,21 @@ const ContactPage: React.FC = () => {
                       </Label>
                       <Input
                         id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
+                        {...register("subject", {
+                          required: "Subject is required",
+                          minLength: {
+                            value: 5,
+                            message: "Subject must be at least 5 characters",
+                          },
+                        })}
                         placeholder="Project Inquiry"
-                        required
                         className="border-none bg-white/50 dark:bg-white/5 backdrop-blur-sm focus:ring-2 focus:ring-[#334CEC]/50"
                       />
+                      {errors.subject && (
+                        <p className="text-sm text-red-600 dark:text-red-400">
+                          {errors.subject.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -312,21 +300,29 @@ const ContactPage: React.FC = () => {
                       </Label>
                       <Textarea
                         id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
+                        {...register("message", {
+                          required: "Message is required",
+                          minLength: {
+                            value: 10,
+                            message: "Message must be at least 10 characters",
+                          },
+                        })}
                         placeholder="Tell me about your project..."
-                        required
                         rows={10}
                         className="border-none bg-white/50 dark:bg-white/5 backdrop-blur-sm focus:ring-2 focus:ring-[#334CEC]/50 resize-none"
                       />
+                      {errors.message && (
+                        <p className="text-sm text-red-600 dark:text-red-400">
+                          {errors.message.message}
+                        </p>
+                      )}
                     </div>
 
                     <motion.button
                       type="submit"
-                      disabled={isSubmitting || !emailJsLoaded}
+                      disabled={isSubmitting}
                       className={`w-full px-6 py-4 rounded-lg bg-gradient-to-r from-[#334CEC] to-purple-600 text-white font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#334CEC]/50 transition-all ${
-                        isSubmitting || !emailJsLoaded ? "opacity-70 cursor-not-allowed" : ""
+                        isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                       }`}
                       whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                       whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
@@ -341,8 +337,6 @@ const ContactPage: React.FC = () => {
                           </motion.div>
                           Sending...
                         </>
-                      ) : !emailJsLoaded ? (
-                        <>Loading...</>
                       ) : (
                         <>
                           <Send className="w-5 h-5" />
@@ -358,7 +352,6 @@ const ContactPage: React.FC = () => {
 
           {/* Contact Info Sidebar */}
           <motion.div className="lg:col-span-1 space-y-6" variants={itemVariants}>
-            {/* Contact Details */}
             <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
@@ -392,7 +385,6 @@ const ContactPage: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Fun Fact Card */}
             <Card className="border-none bg-gradient-to-br from-[#334CEC]/10 to-purple-500/10 dark:from-[#334CEC]/20 dark:to-purple-500/20 backdrop-blur-xl shadow-xl">
               <CardContent className="p-6 text-center">
                 <motion.div

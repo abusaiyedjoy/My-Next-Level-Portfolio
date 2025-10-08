@@ -2,21 +2,13 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Github,
-  Loader2,
-  Tag,
-  Layers,
-  Code,
-} from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Tag } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { TProject } from '@/types';
-import LoadingPage from '@/app/(public)/projects/loading';
-import Background from './../../../../components/ui/background';
+import { TProject } from "@/types";
+import LoadingPage from "@/app/(public)/projects/loading";
+import Background from "./../../../../components/ui/background";
 
 const ProjectDetailsPage = () => {
   const router = useRouter();
@@ -60,15 +52,14 @@ const ProjectDetailsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-        <LoadingPage/>
+        <LoadingPage />
       </div>
     );
   }
 
-
   return (
-    <div className="min-h-screen ">
-        <Background/>
+    <div className="mt-12 min-h-screen ">
+      <Background />
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 lg:py-16">
         {/* Header Actions */}
         <motion.div
@@ -85,9 +76,9 @@ const ProjectDetailsPage = () => {
           </button>
 
           <div className="flex gap-2">
-            {project.github && (
+            {project?.github && (
               <a
-                href={project.github}
+                href={project?.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 transition-colors"
@@ -96,9 +87,9 @@ const ProjectDetailsPage = () => {
                 GitHub
               </a>
             )}
-            {project.live && (
+            {project?.live && (
               <a
-                href={project.live}
+                href={project?.live}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-[#334DED] hover:bg-[#2a3ec4] text-white rounded-lg flex items-center gap-2 transition-colors"
@@ -118,12 +109,12 @@ const ProjectDetailsPage = () => {
         >
           <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl">
             <CardContent className="p-6 md:p-8 lg:p-10">
-              {/* Project Image */}
-              {project.image && (
+              {/* Project? Image */}
+              {project?.image && (
                 <div className="w-full h-64 md:h-96 lg:h-[500px] bg-gradient-to-br from-[#334DED]/20 to-purple-500/20 rounded-lg overflow-hidden mb-8">
                   <img
-                    src={project.image}
-                    alt={project.title}
+                    src={project?.image}
+                    alt={project?.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
@@ -135,22 +126,23 @@ const ProjectDetailsPage = () => {
               {/* Category Badge */}
               <div className="mb-4">
                 <Badge className="bg-[#334DED] text-white border-none px-4 py-1.5 text-sm">
-                  {project.category}
+                  {project?.category}
                 </Badge>
               </div>
 
               {/* Title */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-                {project.title}
+                {project?.title}
               </h1>
 
               {/* Description */}
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                {project.description}
-              </p>
+              <div
+                className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: project!.description }}
+              />
 
               {/* Tags */}
-              {project.tags && project.tags.length > 0 && (
+              {project?.tags && project?.tags.length > 0 && (
                 <div className="mb-8 ">
                   <div className="flex items-center gap-2 mb-4">
                     <Tag className="w-5 h-5 text-[#334DED]" />
@@ -159,7 +151,7 @@ const ProjectDetailsPage = () => {
                     </h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, index) => (
+                    {project?.tags.map((tag, index) => (
                       <span
                         key={index}
                         className="px-3 py-1.5 bg-gradient-to-r from-[#334DED]/10 to-purple-500/10 text-[#334DED] dark:text-[#334DED] rounded-full text-sm font-semibold"
