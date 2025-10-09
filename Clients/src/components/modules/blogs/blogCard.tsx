@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Tag,
 } from "lucide-react";
+import Image from "next/image";
 
 const BlogCard = ({ blog }: { blog: TBlog }) => {
   const router = useRouter();
@@ -55,7 +56,9 @@ const BlogCard = ({ blog }: { blog: TBlog }) => {
             transition={{ duration: 0.3 }}
           >
             {blog.image ? (
-              <img
+              <Image
+                width={500}
+                height={500}
                 src={blog.image}
                 alt={blog.title}
                 className="w-full h-full object-cover"

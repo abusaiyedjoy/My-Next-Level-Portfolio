@@ -53,10 +53,7 @@ const ProjectCard = ({ project }: { project: TProject }) => {
           <p
             className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed"
             dangerouslySetInnerHTML={{
-              __html:
-                project.description.length > 200
-                  ? project.description.slice(0, 200) + "..."
-                  : project.description,
+              __html: project.description
             }}
           />
 

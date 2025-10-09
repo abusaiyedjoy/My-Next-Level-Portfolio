@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { TProject } from "@/types";
 import LoadingPage from "@/app/(public)/projects/loading";
 import Background from "./../../../../components/ui/background";
+import Image from "next/image";
 
 const ProjectDetailsPage = () => {
   const router = useRouter();
@@ -112,7 +113,9 @@ const ProjectDetailsPage = () => {
               {/* Project? Image */}
               {project?.image && (
                 <div className="w-full h-64 md:h-96 lg:h-[500px] bg-gradient-to-br from-[#334DED]/20 to-purple-500/20 rounded-lg overflow-hidden mb-8">
-                  <img
+                  <Image
+                    width={500}
+                    height={500}
                     src={project?.image}
                     alt={project?.title}
                     className="w-full h-full object-cover"

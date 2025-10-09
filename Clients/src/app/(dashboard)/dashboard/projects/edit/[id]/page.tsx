@@ -21,7 +21,7 @@ import dynamic from "next/dynamic";
 const ReactQuill = dynamic(
   async () => {
     const { default: RQ } = await import("react-quill-new");
-    // @ts-ignore
+    // @ts-expect-error
     return ({ forwardedRef, ...props }) => <RQ ref={forwardedRef} {...props} />;
   },
   {

@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { TProject } from "@/types";
 import LoadingPage from "@/app/(public)/projects/loading";
+import Image from "next/image";
 
 const ProjectsPage = () => {
   const router = useRouter();
@@ -238,7 +239,9 @@ const ProjectsPage = () => {
                   {/* Project Image */}
                   <div className="relative h-48 bg-gradient-to-br from-[#334DED]/20 to-[#5865F2]/20 overflow-hidden">
                     {project.image ? (
-                      <img
+                      <Image
+                        width={0}
+                        height={0}
                         src={project.image}
                         alt={project.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
@@ -354,7 +357,9 @@ const ProjectsPage = () => {
                       {/* Project Image */}
                       <div className="w-full lg:w-48 h-32 bg-gradient-to-br from-[#334DED]/20 to-[#5865F2]/20 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {project.image ? (
-                          <img
+                          <Image
+                            width={200}
+                            height={200}
                             src={project.image}
                             alt={project.title}
                             className="w-full h-full object-cover"

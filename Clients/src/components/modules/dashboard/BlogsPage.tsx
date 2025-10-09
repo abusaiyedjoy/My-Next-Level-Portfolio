@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { TBlog } from "@/types";
 import { toast } from "react-hot-toast";
 import LoadingPage from "@/app/(public)/blogs/loading";
+import Image from "next/image";
 
 const BlogsPage = () => {
   const router = useRouter();
@@ -141,7 +142,9 @@ const BlogsPage = () => {
                     {/* Blog Icon/Image */}
                     <div className="w-full lg:w-24 h-24 bg-gradient-to-br from-[#334DED]/20 to-[#5865F2]/20 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {blog.image ? (
-                        <img
+                        <Image
+                          width={200}
+                          height={200}
                           src={blog.image}
                           alt={blog.title}
                           className="w-full h-full object-cover"
@@ -190,7 +193,9 @@ const BlogsPage = () => {
                       {blog.author && (
                         <div className="flex items-center gap-2 mb-4">
                           {blog.authorAvatar ? (
-                            <img
+                            <Image
+                              width={200}
+                              height={200}
                               src={blog.authorAvatar}
                               alt={blog.author}
                               className="w-8 h-8 rounded-full object-cover"
