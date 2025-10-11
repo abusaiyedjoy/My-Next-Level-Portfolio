@@ -13,6 +13,8 @@ import ProfilePage from "@/components/modules/dashboard/ProfilePage";
 import ProjectsPage from "@/components/modules/dashboard/ProjectsPage";
 import BlogsPage from "@/components/modules/dashboard/BlogsPage";
 import Sidebar from "@/components/shared/Sidebar";
+import Image from "next/image";
+import { aboutData } from '@/components/modules/staticData';
 
 const sidebarItems = [
   { id: "profile", label: "Profile", icon: User },
@@ -82,12 +84,13 @@ const Dashboard = () => {
               </div>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <Link
-                  href="/profile"
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#334DED] to-[#5865F2] flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
-                >
-                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </Link>
+                <Image
+                  src="/profile.jpg"
+                  width={128}
+                  height={128}
+                  alt={aboutData?.personalInfo.name}
+                  className="w-10 h-10 object-cover rounded-full"
+                />
               </div>
             </div>
           </header>

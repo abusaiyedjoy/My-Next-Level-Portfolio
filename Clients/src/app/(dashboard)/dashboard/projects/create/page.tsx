@@ -238,7 +238,7 @@ const CreateProjectPage = () => {
                 <Input
                   id="image"
                   {...register("image")}
-                  placeholder="Enter image URL (e.g., ./project1.jpg)"
+                  placeholder="Enter image URL"
                   className="border-none bg-white/50 dark:bg-white/5"
                 />
               </div>
@@ -306,7 +306,7 @@ const CreateProjectPage = () => {
                         <button
                           type="button"
                           onClick={handleAddTag}
-                          className="px-6 py-2 bg-[#334DED] hover:bg-[#2a3ec4] text-white rounded-lg font-medium transition-colors"
+                          className="px-6 py-2 bg-gradient-to-r from-[#334CEC] to-purple-600 text-white rounded-lg font-medium transition-colors"
                         >
                           Add
                         </button>
@@ -352,7 +352,7 @@ const CreateProjectPage = () => {
               </div>
 
               {/* Live Demo URL */}
-              <div className="space-y-2">
+            <div className="space-y-2">
                 <Label htmlFor="live" className="text-base font-semibold">
                   Live Demo URL
                 </Label>
@@ -368,7 +368,7 @@ const CreateProjectPage = () => {
               <div className="flex flex-col sm:flex-row gap-3 pt-6">
                 <button
                   type="button"
-                  onClick={() => router.push("/dashboard/projects")}
+                  onClick={() => router.push("/dashboard")}
                   disabled={loading}
                   className="flex-1 px-6 py-3 border-none bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -377,7 +377,7 @@ const CreateProjectPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#334DED] to-[#5865F2] hover:shadow-lg text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#334CEC] to-purple-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Save className="w-5 h-5" />
                   {loading ? "Creating..." : "Create Project"}

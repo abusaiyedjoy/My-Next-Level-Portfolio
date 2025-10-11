@@ -11,14 +11,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Save, ArrowLeft, X, Loader2 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { toast } from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
+import Background from '@/components/ui/background';
 import "react-quill-new/dist/quill.snow.css";
 
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const ReactQuill = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill-new");
+    // @ts-expect-error
+    return ({ forwardedRef, ...props }) => <RQ ref={forwardedRef} {...props} />;
+  },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-white/50 dark:bg-white/5 rounded-lg p-4 min-h-[250px] flex items-center justify-center">
+        <p className="text-gray-500 dark:text-gray-400">Loading editor...</p>
+      </div>
+    ),
+  }
+) as typeof import("react-quill-new").default;
 
 const categories = [
   "Web Development",
@@ -31,23 +46,55 @@ const categories = [
   "API Design",
 ];
 
-export type TBlog = {
-  id: string | number;
+interface BlogFormData {
   title: string;
   excerpt: string;
   content: string;
-  image?: string;
+  image: string;
   category: string;
   tags: string[];
   author: string;
-  authorAvatar?: string;
-  date?: string;
-  views?: number;
-  comments?: number;
-  likes?: number;
+  authorAvatar: string;
+}
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link", "image", "video"],
+    [{ color: [] }, { background: [] }],
+    [{ align: [] }],
+    ["clean"],
+  ],
 };
 
-type FormData = Omit<TBlog, "id" | "date" | "views" | "comments" | "likes">;
+const quillFormats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
+  "video",
+  "color",
+  "background",
+  "align",
+];
 
 const EditBlogPage = () => {
   const router = useRouter();
@@ -56,7 +103,8 @@ const EditBlogPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [tagInput, setTagInput] = useState<string>("");
+  const [tagInput, setTagInput] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   const {
     register,
@@ -66,7 +114,7 @@ const EditBlogPage = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<BlogFormData>({
     defaultValues: {
       title: "",
       excerpt: "",
@@ -81,48 +129,9 @@ const EditBlogPage = () => {
 
   const tags = watch("tags");
 
-  // Quill modules configuration
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        [{ font: [] }],
-        [{ size: [] }],
-        ["bold", "italic", "underline", "strike", "blockquote"],
-        [
-          { list: "ordered" },
-          { list: "bullet" },
-          { indent: "-1" },
-          { indent: "+1" },
-        ],
-        ["link", "image", "video"],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-    "color",
-    "background",
-    "align",
-  ];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch blog data
   useEffect(() => {
@@ -137,7 +146,7 @@ const EditBlogPage = () => {
           throw new Error("Failed to fetch blog");
         }
 
-        const data: TBlog = await res.json();
+        const data = await res.json();
 
         // Reset form with fetched data
         reset({
@@ -151,7 +160,7 @@ const EditBlogPage = () => {
           authorAvatar: data.authorAvatar || "",
         });
       } catch (err) {
-        alert("Failed to fetch blog. Please try again.");
+        toast.error("Failed to fetch blog. Please try again.");
         console.error(err);
         router.push("/blogs");
       } finally {
@@ -159,10 +168,10 @@ const EditBlogPage = () => {
       }
     };
 
-    if (blogId) {
+    if (blogId && mounted) {
       fetchBlog();
     }
-  }, [blogId, router, reset]);
+  }, [blogId, mounted, reset, router]);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -186,7 +195,7 @@ const EditBlogPage = () => {
     }
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: BlogFormData) => {
     setLoading(true);
 
     try {
@@ -212,50 +221,56 @@ const EditBlogPage = () => {
 
       await res.json();
 
-      alert("Blog updated successfully!");
+      toast.success("Blog updated successfully!");
       router.push("/blogs");
     } catch (err) {
-      alert("Failed to update blog. Please try again.");
+      toast.error("Failed to update blog. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   if (fetching) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
           <Loader2 className="w-16 h-16 text-[#334DED] animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading blog...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen p-4 md:p-6 lg:p-8">
+      <Background/>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => router.push("/blogs")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            Back
+            <span className="font-medium">Back</span>
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-            Edit Blog
-          </h1>
         </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center md:text-left">
+          Edit Blog
+        </h1>
 
         <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl">
-          <CardContent className="p-6 md:p-8">
+          <CardContent className="p-4 md:p-6 lg:p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-base font-semibold">
-                  Title *
+                  Blog Title *
                 </Label>
                 <Input
                   id="title"
@@ -323,23 +338,23 @@ const EditBlogPage = () => {
                         theme="snow"
                         value={field.value}
                         onChange={field.onChange}
-                        modules={modules}
-                        formats={formats}
+                        modules={quillModules}
+                        formats={quillFormats}
                         placeholder="Write your blog content here..."
-                        className="h-64"
+                        className="h-64 md:h-80"
                       />
                     </div>
                   )}
                 />
                 {errors.content && (
-                  <p className="text-sm text-red-500 mt-16">
+                  <p className="text-sm text-red-500 mt-2">
                     {errors.content.message}
                   </p>
                 )}
               </div>
 
               {/* Image URL */}
-              <div className="space-y-2 mt-16">
+              <div className="space-y-2">
                 <Label htmlFor="image" className="text-base font-semibold">
                   Image URL
                 </Label>
@@ -400,21 +415,21 @@ const EditBlogPage = () => {
                   }}
                   render={() => (
                     <>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Input
                           id="tags"
                           value={tagInput}
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyPress={handleKeyPress}
                           placeholder="Add a tag and press Enter"
-                          className={`border-none bg-white/50 dark:bg-white/5 ${
+                          className={`flex-1 border-none bg-white/50 dark:bg-white/5 ${
                             errors.tags ? "ring-2 ring-red-500" : ""
                           }`}
                         />
                         <button
                           type="button"
                           onClick={handleAddTag}
-                          className="bg-[#334DED] hover:bg-[#2a3ec4]"
+                          className="px-6 py-2 bg-gradient-to-r from-[#334DED] to-purple-600 text-white rounded-lg font-medium transition-all hover:shadow-lg disabled:opacity-50"
                         >
                           Add
                         </button>
@@ -424,23 +439,25 @@ const EditBlogPage = () => {
                           {errors.tags.message}
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-semibold flex items-center gap-2"
-                          >
-                            {tag}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveTag(tag)}
-                              className="hover:text-red-500"
+                      {tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {tags.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-semibold flex items-center gap-2 transition-all hover:bg-gray-200 dark:hover:bg-gray-600"
                             >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
+                              {tag}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTag(tag)}
+                                className="hover:text-red-500 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </>
                   )}
                 />
@@ -473,14 +490,22 @@ const EditBlogPage = () => {
                 </div>
               </div>
 
-              {/* Action button */}
-              <div className="flex justify-end pt-6">
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-6">
+                <button
+                  type="button"
+                  onClick={() => router.push("/blogs")}
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 border-none bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-gradient-to-r from-[#334DED] to-[#5865F2] hover:shadow-lg min-w-[200px]"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#334DED] to-[#5865F2] hover:shadow-lg text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  <Save className="w-5 h-5 mr-2" />
+                  <Save className="w-5 h-5" />
                   {loading ? "Updating..." : "Update Blog"}
                 </button>
               </div>

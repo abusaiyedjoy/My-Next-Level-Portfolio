@@ -2,6 +2,7 @@ import React from 'react';
 import { signOut } from "next-auth/react";
 import { User, Briefcase, FileText, LogOut } from 'lucide-react';
 import  Link  from "next/link";
+import Image from 'next/image';
 
 interface SidebarProps {
   activeTab: string;
@@ -42,8 +43,14 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* Logo */}
           <Link href="/" className="p-6 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#334DED] to-[#5865F2] flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl  flex items-center justify-center">
+                <Image
+                  src="/logo.png"
+                  width={100}
+                  height={100}
+                  alt={"logo"}
+                  className=" w-10 h-10"
+                />
               </div>
               <div>
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">Dashboard</h2>

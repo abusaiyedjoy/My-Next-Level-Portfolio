@@ -132,7 +132,7 @@ const EditProjectPage = () => {
       } catch (err) {
         toast.error("Failed to fetch project. Please try again.");
         console.error(err);
-        router.push("/dashboard/projects");
+        router.push("/dashboard");
       } finally {
         setFetching(false);
       }
@@ -186,7 +186,7 @@ const EditProjectPage = () => {
 
       await res.json();
       toast.success("Project updated successfully!");
-      router.push("/dashboard/projects");
+      router.push("/dashboard");
     } catch (err) {
       toast.error("Failed to update project. Please try again.");
       console.error(err);
@@ -216,18 +216,18 @@ const EditProjectPage = () => {
       <Background />
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.push("/dashboard/projects")}
-            className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Back</span>
-          </button>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => router.push("/dashboard")}
+                    className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                    <span className="font-medium">Back</span>
+                  </button>
+                </div>
+          <h1 className="text-2xl md:text-3xl text-center mb-4 font-bold text-gray-900 dark:text-white">
             Edit Project
           </h1>
-        </div>
 
         <Card className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-xl">
           <CardContent className="p-6 md:p-8">
@@ -294,7 +294,7 @@ const EditProjectPage = () => {
                 <Input
                   id="image"
                   {...register("image")}
-                  placeholder="Enter image URL (e.g., ./project1.jpg)"
+                  placeholder="Enter image URL"
                   className="border-none bg-white/50 dark:bg-white/5"
                 />
               </div>
@@ -362,7 +362,7 @@ const EditProjectPage = () => {
                         <button
                           type="button"
                           onClick={handleAddTag}
-                          className="px-6 py-2 bg-[#334DED] hover:bg-[#2a3ec4] text-white rounded-lg font-medium transition-colors"
+                          className="px-6 py-2 cursor-pointer bg-gradient-to-r from-[#334CEC] to-purple-600 text-white rounded-lg font-medium transition-colors"
                         >
                           Add
                         </button>
@@ -433,7 +433,7 @@ const EditProjectPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#334DED] to-[#5865F2] hover:shadow-lg text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-6 cursor-pointer py-3 bg-gradient-to-r from-[#334CEC] to-purple-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Save className="w-5 h-5" />
                   {loading ? "Updating..." : "Update Project"}

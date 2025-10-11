@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { TBlog } from "@/types";
 import Background from "@/components/ui/background";
-import Image from "next/image";
 
 const BlogViewPage = () => {
   const router = useRouter();
@@ -82,9 +81,7 @@ const BlogViewPage = () => {
             {/* Featured Image */}
             {blog?.image && (
               <div className="w-full h-64 md:h-96 bg-gradient-to-br from-[#334DED]/20 to-[#5865F2]/20 rounded-lg overflow-hidden mb-6">
-                <Image
-                  width={500}
-                  height={500}
+                <img
                   src={blog?.image}
                   alt={blog?.title}
                   className="w-full h-full object-cover"
@@ -115,15 +112,11 @@ const BlogViewPage = () => {
             {blog?.author && (
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                 {blog?.authorAvatar ? (
-                  <Image
-                    width={500}
-                    height={500}
+                  <img
                     src={blog?.authorAvatar}
                     alt={blog?.author}
                     className="w-12 h-12 rounded-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
+                    
                   />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#334DED] to-[#5865F2] flex items-center justify-center text-white text-lg font-semibold">

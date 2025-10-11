@@ -226,12 +226,12 @@ const ProjectsPage = () => {
         <div className="space-y-4">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Briefcase className="w-6 h-6 text-[#334DED]" />
-            All Projects ({filteredProjects.length})
+            All Projects ({filteredProjects?.length})
           </h2>
 
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => (
+              {filteredProjects?.map((project) => (
                 <Card
                   key={project.id}
                   className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all overflow-hidden group"
@@ -347,7 +347,7 @@ const ProjectsPage = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredProjects.map((project) => (
+              {filteredProjects?.map((project) => (
                 <Card
                   key={project.id}
                   className="border-none bg-gradient-to-br from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all"

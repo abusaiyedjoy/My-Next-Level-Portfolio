@@ -34,8 +34,24 @@ const ProjectCard = ({ project }: { project: TProject }) => {
             }}
             transition={{ duration: 0.3 }}
           >
-            <Code2 className="w-24 h-24 text-[#334CEC]/20" />
+            {project?.image ? (
+              <img
+                src={project?.image}
+                alt={project.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <Code2 className="w-20 h-20 text-[#334CEC]/20" />
+            )}
           </motion.div>
+          <div className="absolute top-3 left-3">
+            <Badge className="bg-[#334CEC] text-white border-none text-xs">
+              {project.category}
+            </Badge>
+          </div>
         </div>
 
         <CardHeader>
@@ -53,7 +69,7 @@ const ProjectCard = ({ project }: { project: TProject }) => {
           <p
             className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed"
             dangerouslySetInnerHTML={{
-              __html: project.description
+              __html: project.description,
             }}
           />
 
